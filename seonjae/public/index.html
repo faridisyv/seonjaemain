@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>손재 · Seonjae — a photobooth for two cities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-2"></span>
+  <span class="blob blob-3"></span>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<main id="app">
+
+  <!-- ============ LANDING ============ -->
+  <section id="view-landing" class="view active">
+    <div class="landing-grid">
+      <div class="landing-copy">
+        <p class="eyebrow">인생네컷 · for two cities</p>
+        <h1 class="hero-title">손재<span class="hero-sub">Seonjae</span></h1>
+        <p class="hero-desc">Two phones. Two cities. One photostrip.<br/>
+          Take your four cuts together, even when "together" means a video call.</p>
+        <div class="hero-actions">
+          <button id="btn-create" class="btn btn-primary">Create a room</button>
+          <button id="btn-join" class="btn btn-ghost">Join with a code</button>
+        </div>
+        <div id="join-inline" class="join-inline hidden">
+          <input id="join-code" type="text" maxlength="8" placeholder="room code" autocomplete="off" />
+          <button id="btn-join-go" class="btn btn-primary btn-sm">Join</button>
+        </div>
+      </div>
+      <div class="landing-visual" aria-hidden="true">
+        <div class="strip-mock">
+          <div class="strip-cut"><span class="flash"></span>💗</div>
+          <div class="strip-cut"><span class="flash"></span>✨</div>
+          <div class="strip-cut"><span class="flash"></span>🧸</div>
+          <div class="strip-cut"><span class="flash"></span>🎀</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LOBBY ============ -->
+  <section id="view-lobby" class="view">
+    <div class="panel panel-narrow">
+      <p class="eyebrow">room ready</p>
+      <h2>Send this to your person</h2>
+      <div class="room-code-box">
+        <span id="lobby-code">------</span>
+        <button id="btn-copy-code" class="btn btn-sm btn-ghost">Copy code</button>
+      </div>
+      <div class="room-link-box">
+        <input id="lobby-link" type="text" readonly />
+        <button id="btn-copy-link" class="btn btn-sm btn-ghost">Copy link</button>
+      </div>
+      <p class="lobby-status" id="lobby-status">Waiting for your partner to join…</p>
+      <div class="pulse-dots"><span></span><span></span><span></span></div>
+      <div class="email-block">
+        <label for="reminder-email">Your email <span class="optional-tag">(optional — for a 5pm KST reminder)</span></label>
+        <input id="reminder-email" type="email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <button id="btn-lobby-continue" class="btn btn-primary">Enter the booth</button>
+    </div>
+  </section>
+
+  <!-- ============ PHOTOBOOTH ============ -->
+  <section id="view-photobooth" class="view">
+    <div class="booth-grid">
+      <div class="booth-camera">
+        <div class="camera-frame">
+          <video id="video" autoplay playsinline muted></video>
+          <div id="countdown" class="countdown hidden">3</div>
+          <div id="flash-overlay" class="flash-overlay"></div>
+        </div>
+        <button id="btn-capture" class="btn btn-primary btn-capture">
+          <span class="dot"></span> Take the cut (<span id="cut-number">1</span>/4)
+        </button>
+        <button id="btn-nudge" class="btn btn-ghost btn-nudge">💌 Nudge them — I'm ready</button>
+        <p class="hint">Look for the flash — then check the strip on the right.</p>
+      </div>
+      <div class="booth-strips">
+        <div class="mini-strip">
+          <p class="mini-strip-label">You</p>
+          <div class="mini-slots" id="slots-mine">
+            <div class="mini-slot" data-slot="0"></div>
+            <div class="mini-slot" data-slot="1"></div>
+            <div class="mini-slot" data-slot="2"></div>
+            <div class="mini-slot" data-slot="3"></div>
+          </div>
+        </div>
+        <div class="mini-strip">
+          <p class="mini-strip-label">Them</p>
+          <div class="mini-slots" id="slots-partner">
+            <div class="mini-slot" data-slot="0"></div>
+            <div class="mini-slot" data-slot="1"></div>
+            <div class="mini-slot" data-slot="2"></div>
+            <div class="mini-slot" data-slot="3"></div>
+          </div>
+        </div>
+        <button id="btn-to-editor" class="btn btn-primary" disabled>Compose the strip</button>
+        <p class="hint" id="editor-hint">Waiting on 8 photos total — 4 from each of you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EDITOR ============ -->
+  <section id="view-editor" class="view">
+    <div class="editor-grid">
+      <div class="editor-canvas-wrap">
+        <canvas id="canvas" width="480" height="900"></canvas>
+        <div id="sticker-overlay" class="sticker-overlay"></div>
+      </div>
+      <div class="editor-controls">
+        <div class="control-block">
+          <p class="control-label">Frame</p>
+          <div class="swatches" id="frame-swatches">
+            <button class="swatch" data-frame="lavender" style="background:#E8DBFC"></button>
+            <button class="swatch" data-frame="pink" style="background:#FFD6EC"></button>
+            <button class="swatch" data-frame="cream" style="background:#FBF3E7"></button>
+            <button class="swatch" data-frame="plum" style="background:#4A2E5C"></button>
+          </div>
+        </div>
+        <div class="control-block">
+          <p class="control-label">Filter</p>
+          <select id="filter-select">
+            <option value="none">Natural</option>
+            <option value="retro">Retro</option>
+            <option value="peach">Peach</option>
+            <option value="grayscale">Grayscale</option>
+            <option value="cold">Cold</option>
+            <option value="glow">Glow</option>
+          </select>
+        </div>
+        <div class="control-block">
+          <p class="control-label">Stickers</p>
+          <div class="sticker-tray" id="sticker-tray">
+            <button class="sticker-btn" data-sticker="💕">💕</button>
+            <button class="sticker-btn" data-sticker="✨">✨</button>
+            <button class="sticker-btn" data-sticker="🎀">🎀</button>
+            <button class="sticker-btn" data-sticker="🐰">🐰</button>
+            <button class="sticker-btn" data-sticker="👑">👑</button>
+            <button class="sticker-btn" data-sticker="🧸">🧸</button>
+            <button class="sticker-btn" data-sticker="💌">💌</button>
+            <button class="sticker-btn" data-sticker="🌙">🌙</button>
+          </div>
+          <p class="hint">Tap a sticker to drop it on the strip, then drag to place it.</p>
+        </div>
+        <button id="btn-save-strip" class="btn btn-primary">Finish the strip</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHARE ============ -->
+  <section id="view-share" class="view">
+    <div class="panel panel-share">
+      <p class="eyebrow">done!</p>
+      <h2>Your four cuts</h2>
+      <img id="final-strip-img" class="final-strip-img" alt="Your finished photostrip" />
+      <div class="share-row">
+        <div class="qr-box" id="qr-box"></div>
+        <div class="share-copy">
+          <p>Scan to save the strip to your phone.</p>
+          <a id="btn-download" class="btn btn-primary" download="seonjae-strip.png">Download strip</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
