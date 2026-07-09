@@ -1,0 +1,13 @@
+{
+  "name": "sonjae",
+  "version": "1.0.0",
+  "description": "손재 (Sonjae) — a collaborative LDR photobooth. Take a Korean-style 4-cut photostrip with your partner from two different cities.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {}
+}
